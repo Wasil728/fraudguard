@@ -1,48 +1,65 @@
-# ml/predictor.py
-# Loads the trained model and provides a predict() function.
-# The model artifact (model.joblib) is created in Part 2 (Google Colab)
-# and placed in ml/artifacts/ before running the server.
-
-import os
 import json
+from pathlib import Path
+
 import joblib
-import numpy as np
+import pandas as pd
+import shap
 
-ARTIFACTS_DIR = os.path.join(os.path.dirname(__file__), "artifacts")
-MODEL_PATH = os.path.join(ARTIFACTS_DIR, "model.joblib")
-META_PATH = os.path.join(ARTIFACTS_DIR, "meta.json")
+# The folder where model.joblib and meta.json are saved
+ARTIFACTS = Path(__file__).resolve().parent / "artifacts"
 
-_model = None
-_meta = None
+# Load everything ONE time when Django starts
+model = joblib.load(ARTIFACTS / "model.joblib")
+meta = json.loads((ARTIFACTS / "meta.json").read_text())
+explainer = shap.TreeExplainer(model)
+
+# Friendly names to show on the website instead of column names
+FRIENDLY = {
+    "type_code":        "Transaction type",
+    "amount":           "Transaction amount",
+    "oldbalanceOrg":    "Sender balance before",
+    "newbalanceOrig":   "Sender balance after",
+    "oldbalanceDest":   "Receiver balance before",
+    "newbalanceDest":   "Receiver balance after",
+    "errorBalanceOrig": "Sender balance check",
+    "errorBalanceDest": "Receiver balance check",
+}
 
 
-def _load():
-    global _model, _meta
-    if _model is None:
-        _model = joblib.load(MODEL_PATH)
-    if _meta is None:
-        with open(META_PATH, "r") as f:
-            _meta = json.load(f)
+def build_features(txn_type, amount, old_org, new_org, old_dest, new_dest):
+    """Turn the form values into the 8 clues the model expects."""
+    if txn_type == "TRANSFER":
+        type_code = 1
+    else:
+        type_code = 0
+    return {
+        "type_code":        type_code,
+        "amount":           amount,
+        "oldbalanceOrg":    old_org,
+        "newbalanceOrig":   new_org,
+        "oldbalanceDest":   old_dest,
+        "newbalanceDest":   new_dest,
+        "errorBalanceOrig": new_org + amount - old_org,
+        "errorBalanceDest": old_dest + amount - new_dest,
+    }
 
 
-def predict(features: dict) -> dict:
-    """
-    Accept a dict of raw feature values, return fraud probability and label.
+def get_impact(reason):
+    """Helper for sorting: how strong is this reason?"""
+    return abs(reason["impact"])
 
-    Args:
-        features: dict mapping feature names to values
 
-    Returns:
-        dict with keys: probability (float), is_fraud (bool)
-    """
-    _load()
+def predict(features):
+    """Return the risk score (0 to 100) and the top 5 reasons."""
+    # One-row table, with the columns in the same order as during training
+    row = pd.DataFrame([features])[meta["features"]]
 
-    feature_names = _meta.get("features", _meta.get("feature_names", []))
-    X = np.array([[features[col] for col in feature_names]])
+    score = model.predict_proba(row)[0][1] * 100   # fraud chance x 100
+    shap_values = explainer.shap_values(row)[0]    # one SHAP number per clue
 
-    prob = float(_model.predict_proba(X)[0][1])
-    raw_thresh = _meta.get("recommended_threshold", _meta.get("threshold", 0.5))
-    threshold = raw_thresh / 100.0 if raw_thresh > 1.0 else raw_thresh
-    is_fraud = prob >= threshold
+    reasons = []
+    for name, value in zip(meta["features"], shap_values):
+        reasons.append({"feature": FRIENDLY[name], "impact": round(float(value), 4)})
 
-    return {"probability": prob, "is_fraud": is_fraud, "threshold": threshold}
+    reasons.sort(key=get_impact, reverse=True)
+    return round(float(score), 2), reasons[:5]
