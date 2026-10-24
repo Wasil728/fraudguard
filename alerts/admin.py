@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import FraudAlert, ModelMetric
+
+admin.site.register(FraudAlert)
+admin.site.register(ModelMetric)
