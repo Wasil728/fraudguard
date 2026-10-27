@@ -56,3 +56,13 @@ table th {
     color: #64748b;
     border-bottom: 2px solid #e2e8f0;
 }
+
+@media (max-width: 768px) {
+    .layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+    }
+}
