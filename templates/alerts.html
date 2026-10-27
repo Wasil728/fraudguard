@@ -1,67 +1,147 @@
 {% extends "base.html" %}
-{% block title %}Fraud Alerts - FraudGuard{% endblock %}
+{% block title %}Fraud Alerts Queue - FraudGuard Enterprise{% endblock %}
 {% block content %}
-<h3>Fraud Alerts</h3>
-<div class="d-flex align-items-center gap-2 my-3">
-    <label class="form-label mb-0 fw-bold">Filter status:</label>
-    <select id="status-filter" class="form-select w-auto">
-        <option value="">All</option>
-        <option value="new">New</option>
-        <option value="reviewed">Reviewed</option>
-        <option value="dismissed">Dismissed</option>
-    </select>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="h4 mb-1 fw-bold text-dark">Fraud Alert Management Queue</h2>
+        <p class="text-muted mb-0 small">Investigate, review, and resolve high-risk transactions flagged by XGBoost.</p>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+        <label for="status-filter" class="form-label mb-0 small fw-bold text-muted text-nowrap">Filter Status:</label>
+        <select id="status-filter" class="form-select form-select-sm" style="min-width: 140px;">
+            <option value="">All Alerts</option>
+            <option value="new">New (Pending)</option>
+            <option value="reviewed">Reviewed (Confirmed)</option>
+            <option value="dismissed">Dismissed (False Alarm)</option>
+        </select>
+    </div>
 </div>
-<div class="card shadow-sm p-3">
-    <table class="table table-hover align-middle mb-0">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Amount</th>
-                <th>Risk Score</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="alerts-body">
-            <tr><td colspan="6" class="text-center py-3 text-muted">Loading alerts...</td></tr>
-        </tbody>
-    </table>
+
+<div class="card mb-4">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+        <div>
+            <h5 class="card-title h6 mb-0 fw-bold text-dark">Live Alert Feed</h5>
+            <small class="text-muted" id="alert-count-label">Loading transactions...</small>
+        </div>
+        <button class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1" onclick="loadAlerts(document.getElementById('status-filter').value)">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>Refresh</span>
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th class="ps-4">Alert ID</th>
+                    <th>Type</th>
+                    <th>Amount (INR)</th>
+                    <th>Risk Score</th>
+                    <th>Current Status</th>
+                    <th class="text-end pe-4">Investigation</th>
+                </tr>
+            </thead>
+            <tbody id="alerts-body">
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                        Fetching alerts queue...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script>
 async function loadAlerts(status) {
-    try {
-        const response = await fetch("/api/alerts/?status=" + status);
-        const alerts = await response.json();
-        const body = document.getElementById("alerts-body");
-        body.innerHTML = "";
-        for (const a of alerts) {
-            let statusBadge = "bg-secondary";
-            if (a.status === "new") statusBadge = "bg-danger";
-            else if (a.status === "reviewed") statusBadge = "bg-success";
-            else if (a.status === "dismissed") statusBadge = "bg-warning text-dark";
+    const body = document.getElementById("alerts-body");
+    const countLabel = document.getElementById("alert-count-label");
+    body.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center py-5 text-muted">
+                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                Updating queue...
+            </td>
+        </tr>
+    `;
 
-            body.innerHTML += "<tr>" +
-                "<td>#" + a.id + "</td>" +
-                "<td>" + a.txn_type + "</td>" +
-                "<td>" + a.amount + "</td>" +
-                "<td class='risk-high fw-bold'>" + a.risk_score + "</td>" +
-                "<td><span class='badge " + statusBadge + "'>" + a.status + "</span></td>" +
-                "<td><a href='/alerts/" + a.id + "/' class='btn btn-sm btn-outline-primary'>Details</a></td></tr>";
+    try {
+        const response = await fetch("/api/alerts/?status=" + encodeURIComponent(status));
+        const alerts = await response.json();
+        body.innerHTML = "";
+
+        countLabel.textContent = `${alerts.length} transaction${alerts.length === 1 ? '' : 's'} recorded`;
+
+        for (const a of alerts) {
+            let statusBadgeClass = "status-new";
+            let statusText = "New";
+            if (a.status === "reviewed") {
+                statusBadgeClass = "status-reviewed";
+                statusText = "Reviewed";
+            } else if (a.status === "dismissed") {
+                statusBadgeClass = "status-dismissed";
+                statusText = "Dismissed";
+            }
+
+            const riskClass = a.risk_score >= 50 ? "risk-pill-high" : "risk-pill-low";
+
+            body.innerHTML += `
+                <tr>
+                    <td class="ps-4">
+                        <span class="fw-semibold text-dark">#${a.id}</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">${a.txn_type}</span>
+                    </td>
+                    <td>
+                        <span class="fw-bold text-dark">₹${a.amount}</span>
+                    </td>
+                    <td>
+                        <span class="risk-score-pill ${riskClass}">${a.risk_score}/100</span>
+                    </td>
+                    <td>
+                        <span class="status-badge ${statusBadgeClass}">
+                            <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i>
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="text-end pe-4">
+                        <a href="/alerts/${a.id}/" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
+                            <span>Investigate</span>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </td>
+                </tr>
+            `;
         }
+
         if (alerts.length === 0) {
-            body.innerHTML = "<tr><td colspan='6' class='text-center py-3 text-muted'>No alerts found.</td></tr>";
+            body.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="bi bi-check2-circle text-success fs-2 d-block mb-2"></i>
+                        No alerts match the selected criteria.
+                    </td>
+                </tr>
+            `;
         }
     } catch (e) {
-        document.getElementById("alerts-body").innerHTML = "<tr><td colspan='6' class='text-danger text-center'>Failed to load alerts.</td></tr>";
+        body.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-danger text-center py-4">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> Failed to communicate with alerts API.
+                </td>
+            </tr>
+        `;
     }
 }
 
 document.getElementById("status-filter").addEventListener("change", function () {
     loadAlerts(this.value);
 });
+
 loadAlerts("");
 </script>
 {% endblock %}

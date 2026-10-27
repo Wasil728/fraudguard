@@ -1,70 +1,238 @@
 {% extends "base.html" %}
-{% block title %}Alert #{{ alert.id }} - FraudGuard{% endblock %}
+{% block title %}Investigation #{{ alert.id }} - FraudGuard Enterprise{% endblock %}
 {% block content %}
-<a href="{% url 'alerts' %}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back to alerts</a>
-<h3>Alert #{{ alert.id }}</h3>
-<div class="card p-4 shadow-sm mb-4">
-    <div class="row">
-        <div class="col-md-6">
-            <p class="mb-1"><strong>Type:</strong> {{ alert.transaction.txn_type }}</p>
-            <p class="mb-1"><strong>Amount:</strong> ₹{{ alert.transaction.amount }}</p>
-            <p class="mb-1"><strong>Sender:</strong> {{ alert.transaction.sender_id }} (Balance: {{ alert.transaction.old_balance_org }} &rarr; {{ alert.transaction.new_balance_org }})</p>
-            <p class="mb-1"><strong>Receiver:</strong> {{ alert.transaction.receiver_id }} (Balance: {{ alert.transaction.old_balance_dest }} &rarr; {{ alert.transaction.new_balance_dest }})</p>
+<div class="mb-3">
+    <a href="{% url 'alerts' %}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+        <i class="bi bi-arrow-left"></i>
+        <span>Back to Alerts Queue</span>
+    </a>
+</div>
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <h2 class="h4 mb-0 fw-bold text-dark">Incident Dossier #{{ alert.id }}</h2>
+            <span class="status-badge {% if alert.status == 'new' %}status-new{% elif alert.status == 'reviewed' %}status-reviewed{% else %}status-dismissed{% endif %}" id="status-pill">
+                <i class="bi bi-circle-fill" style="font-size: 0.5rem;"></i>
+                <span id="status-text">{{ alert.status|title }}</span>
+            </span>
         </div>
-        <div class="col-md-6">
-            <p class="mb-1"><strong>Risk Score:</strong> <span class="risk-high fs-5 fw-bold">{{ alert.transaction.risk_score }} / 100</span></p>
-            <p class="mb-1"><strong>Timestamp:</strong> {{ alert.created_at|date:"Y-m-d H:i:s" }}</p>
-            <p class="mb-1" id="status-label"><strong>Current Status:</strong> <span class="badge bg-primary">{{ alert.status }}</span></p>
+        <p class="text-muted mb-0 small">Audit trail and TreeSHAP attribution generated at {{ alert.created_at|date:"M d, Y H:i:s" }} UTC</p>
+    </div>
+    <!-- Analyst Resolution Actions -->
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-success d-inline-flex align-items-center gap-1" data-status="reviewed">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>Confirm &amp; Review</span>
+        </button>
+        <button class="btn btn-outline-secondary d-inline-flex align-items-center gap-1" data-status="dismissed">
+            <i class="bi bi-x-circle"></i>
+            <span>Dismiss False Alarm</span>
+        </button>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Transaction Ledger Audit -->
+    <div class="col-lg-7">
+        <div class="card p-4 h-100">
+            <h5 class="h6 mb-3 fw-bold text-dark pb-2 border-bottom">
+                <i class="bi bi-journal-text text-primary me-2"></i>Ledger Telemetry
+            </h5>
+
+            <div class="row g-3">
+                <div class="col-6">
+                    <span class="text-muted small">Operation Type</span>
+                    <div class="fw-bold text-dark">{{ alert.transaction.txn_type }}</div>
+                </div>
+                <div class="col-6">
+                    <span class="text-muted small">Total Volume</span>
+                    <div class="fw-bold text-dark fs-5">₹{{ alert.transaction.amount }}</div>
+                </div>
+
+                <!-- Sender Ledger Card -->
+                <div class="col-12">
+                    <div class="p-3 rounded bg-light border">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold text-secondary small">
+                                <i class="bi bi-person-circle me-1"></i> Sender (Origin)
+                            </span>
+                            <span class="font-monospace small text-dark">{{ alert.transaction.sender_id }}</span>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-6 border-end">
+                                <span class="text-muted text-xs" style="font-size: 0.72rem;">BALANCE BEFORE</span>
+                                <div class="fw-semibold text-dark">₹{{ alert.transaction.old_balance_org }}</div>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted text-xs" style="font-size: 0.72rem;">BALANCE AFTER</span>
+                                <div class="fw-semibold {% if alert.transaction.new_balance_org == 0 %}text-danger{% else %}text-dark{% endif %}">
+                                    ₹{{ alert.transaction.new_balance_org }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Receiver Ledger Card -->
+                <div class="col-12">
+                    <div class="p-3 rounded bg-light border">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-semibold text-secondary small">
+                                <i class="bi bi-bank me-1"></i> Receiver (Destination)
+                            </span>
+                            <span class="font-monospace small text-dark">{{ alert.transaction.receiver_id }}</span>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-6 border-end">
+                                <span class="text-muted text-xs" style="font-size: 0.72rem;">BALANCE BEFORE</span>
+                                <div class="fw-semibold text-dark">₹{{ alert.transaction.old_balance_dest }}</div>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted text-xs" style="font-size: 0.72rem;">BALANCE AFTER</span>
+                                <div class="fw-semibold text-dark">₹{{ alert.transaction.new_balance_dest }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Assessment Summary -->
+    <div class="col-lg-5">
+        <div class="card p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+                <h5 class="h6 mb-3 fw-bold text-dark pb-2 border-bottom">
+                    <i class="bi bi-cpu text-primary me-2"></i>Risk Model Evaluation
+                </h5>
+                <div class="d-flex align-items-center justify-content-between p-3 rounded bg-danger-subtle border border-danger-subtle mb-3">
+                    <div>
+                        <div class="text-danger small fw-bold text-uppercase">Assigned Risk Score</div>
+                        <div class="fs-2 fw-bold text-danger">{{ alert.transaction.risk_score }} <span class="fs-6 text-muted">/ 100</span></div>
+                    </div>
+                    <div class="text-danger fs-1">
+                        <i class="bi bi-shield-slash-fill"></i>
+                    </div>
+                </div>
+                <div class="small text-muted">
+                    <p class="mb-2"><strong>Decision Logic:</strong> Transaction exceeds the configured risk threshold. Full balance drain discrepancy identified between sender starting balance and transfer amount.</p>
+                    <p class="mb-0"><strong>Inference Latency:</strong> &lt; 2 milliseconds</p>
+                </div>
+            </div>
+            <div class="pt-3 border-top mt-3">
+                <span class="text-xs text-muted" style="font-size: 0.75rem;">Model Signature: XGBoost v2.0.3 · PaySim Synthetic Benchmark · Gradient Boosted Trees</span>
+            </div>
         </div>
     </div>
 </div>
 
-<div class="card p-4 shadow-sm mb-4">
-    <h5 class="mb-3">SHAP Feature Impact Breakdown</h5>
-    <canvas id="shapChart" height="120"></canvas>
-</div>
-
-<div class="d-flex align-items-center gap-2">
-    <button class="btn btn-success" data-status="reviewed">Mark as Reviewed</button>
-    <button class="btn btn-outline-secondary" data-status="dismissed">Dismiss as False Alarm</button>
+<!-- SHAP Feature Impact Chart -->
+<div class="card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h5 class="h6 mb-0 fw-bold text-dark">TreeSHAP Feature Attribution (Why the model flagged this)</h5>
+            <small class="text-muted">Red bars indicate features pushing towards Fraud, green bars indicate features pushing towards Legitimate.</small>
+        </div>
+        <span class="badge bg-light text-secondary border">Local Explainability</span>
+    </div>
+    <div style="min-height: 220px;">
+        <canvas id="shapChart" height="110"></canvas>
+    </div>
 </div>
 
 <form id="csrf-holder">{% csrf_token %}</form>
 {{ alert.shap_explanation|json_script:"shap-data" }}
 {% endblock %}
+
 {% block scripts %}
 <script>
 const reasons = JSON.parse(document.getElementById("shap-data").textContent);
 const labels = [];
 const impacts = [];
 const colours = [];
+
+const friendlyFeatureMap = {
+    "error_balance_org": "Sender Balance Discrepancy",
+    "error_balance_dest": "Receiver Balance Discrepancy",
+    "amount": "Transaction Volume",
+    "old_balance_org": "Sender Initial Balance",
+    "new_balance_org": "Sender Final Balance",
+    "old_balance_dest": "Receiver Initial Balance",
+    "new_balance_dest": "Receiver Final Balance",
+    "type_CASH_OUT": "Cash-Out Type",
+    "type_TRANSFER": "Transfer Type"
+};
+
 for (const r of reasons) {
-    labels.push(r.feature);
+    labels.push(friendlyFeatureMap[r.feature] || r.feature);
     impacts.push(r.impact);
-    if (r.impact >= 0) { colours.push("#dc3545"); } else { colours.push("#198754"); }
+    if (r.impact >= 0) { 
+        colours.push("#ef4444"); // red pushes risk higher
+    } else { 
+        colours.push("#10b981"); // green lowers risk
+    }
 }
 
 new Chart(document.getElementById("shapChart"), {
     type: "bar",
     data: {
         labels: labels,
-        datasets: [{ label: "Impact on Fraud Score (SHAP)", data: impacts, backgroundColor: colours }],
+        datasets: [{
+            label: "SHAP Impact Score",
+            data: impacts,
+            backgroundColor: colours,
+            borderRadius: 6,
+        }],
     },
-    options: { indexAxis: "y" },
+    options: {
+        indexAxis: "y",
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const val = context.raw;
+                        return (val >= 0 ? "Raises fraud risk: +" : "Lowers fraud risk: ") + val;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: { color: "#f1f5f9" },
+                ticks: { color: "#64748b" }
+            },
+            y: {
+                grid: { display: false },
+                ticks: { color: "#1e293b", font: { weight: 500 } }
+            }
+        }
+    },
 });
 
+// Resolution buttons handling
 const token = document.querySelector("#csrf-holder [name=csrfmiddlewaretoken]").value;
 const buttons = document.querySelectorAll("[data-status]");
+const statusPill = document.getElementById("status-pill");
+const statusText = document.getElementById("status-text");
+
 for (const button of buttons) {
     button.addEventListener("click", async function () {
         const newStatus = button.dataset.status;
-        const response = await fetch("/api/alerts/{{ alert.id }}/", {
-            method: "PATCH",
-            headers: {"Content-Type": "application/json", "X-CSRFToken": token},
-            body: JSON.stringify({status: newStatus}),
-        });
-        if (response.ok) {
-            document.getElementById("status-label").innerHTML = "<strong>Current Status:</strong> <span class='badge bg-success'>" + newStatus + "</span>";
+        try {
+            const response = await fetch("/api/alerts/{{ alert.id }}/", {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json", "X-CSRFToken": token},
+                body: JSON.stringify({status: newStatus}),
+            });
+            if (response.ok) {
+                statusText.textContent = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
+                statusPill.className = "status-badge " + (newStatus === "reviewed" ? "status-reviewed" : "status-dismissed");
+            }
+        } catch (e) {
+            alert("Failed to update alert status.");
         }
     });
 }

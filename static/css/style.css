@@ -1,62 +1,390 @@
-/* static/css/style.css */
+/* ==========================================================================
+   FraudGuard Enterprise UI Stylesheet
+   Design System: Modern FinTech / Enterprise Risk Console (Stripe Radar style)
+   ========================================================================== */
 
-body {
-    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #f4f6f9;
-    margin: 0;
-    padding: 0;
-    color: #333;
+:root {
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sidebar-bg: #0f172a;
+    --sidebar-hover: #1e293b;
+    --sidebar-active: #334155;
+    --sidebar-text: #94a3b8;
+    --sidebar-text-active: #ffffff;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --border-color: #e2e8f0;
+    --border-subtle: #f1f5f9;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --success: #10b981;
+    --success-bg: #ecfdf5;
+    --danger: #ef4444;
+    --danger-bg: #fef2f2;
+    --warning: #f59e0b;
+    --warning-bg: #fffbeb;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
 }
 
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Layout */
 .layout {
     min-height: 100vh;
 }
 
+/* Sidebar */
 .sidebar {
-    width: 250px;
-    min-width: 250px;
+    width: 260px;
+    min-width: 260px;
     min-height: 100vh;
-    background-color: #1e293b !important;
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
 }
 
-.sidebar h5 {
+.brand-wrapper {
+    padding: 1.5rem 1.25rem 1.25rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+.sidebar .nav-section-title {
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #475569;
+    padding: 1rem 1rem 0.5rem 1rem;
 }
 
 .sidebar .nav-link {
-    font-size: 0.95rem;
-    padding: 0.6rem 0.8rem;
+    color: var(--sidebar-text);
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 0.65rem 1rem;
+    margin: 0.15rem 0.75rem;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.sidebar .nav-link i {
+    font-size: 1.05rem;
+    opacity: 0.8;
 }
 
 .sidebar .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff !important;
+    background-color: var(--sidebar-hover);
+    color: var(--sidebar-text-active);
 }
 
-.risk-high {
-    color: #dc3545;
-    font-weight: 700;
-}
-
-.risk-low {
-    color: #198754;
-    font-weight: 700;
-}
-
-.card {
-    border: none;
-    border-radius: 8px;
-}
-
-table th {
+.sidebar .nav-link.active {
+    background-color: var(--primary);
+    color: white;
     font-weight: 600;
-    color: #64748b;
-    border-bottom: 2px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
 }
 
+.sidebar .nav-link.active i {
+    opacity: 1;
+}
+
+/* Main Content Area */
+main.flex-grow-1 {
+    background-color: var(--bg-main);
+    min-height: 100vh;
+}
+
+.top-bar {
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1.75rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Cards */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+.stat-icon-primary { background: #eff6ff; color: #2563eb; }
+.stat-icon-danger  { background: #fef2f2; color: #ef4444; }
+.stat-icon-success { background: #ecfdf5; color: #10b981; }
+.stat-icon-warning { background: #fffbeb; color: #f59e0b; }
+
+.stat-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-top: 0.25rem;
+}
+
+/* Tables */
+.table-container {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #f8fafc;
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 1rem;
+}
+
+.table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    font-size: 0.875rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr:hover td {
+    background-color: #f8fafc;
+}
+
+/* Status Chips / Badges */
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.65rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.status-badge.status-new {
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.status-badge.status-reviewed {
+    background-color: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.status-badge.status-dismissed {
+    background-color: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+/* Risk Score Highlighting */
+.risk-score-pill {
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.risk-pill-high {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.risk-pill-low {
+    background-color: #d1fae5;
+    color: #047857;
+}
+
+/* Simulator Gauge */
+.gauge-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+}
+
+.gauge-circle {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.gauge-svg {
+    transform: rotate(-90deg);
+}
+
+.gauge-bg {
+    fill: none;
+    stroke: #e2e8f0;
+    stroke-width: 10;
+}
+
+.gauge-fill {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.4s ease;
+}
+
+.gauge-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.gauge-number {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.gauge-unit {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* SHAP Feature Impact Bars */
+.shap-factor-row {
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.shap-factor-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.shap-badge-raise {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.shap-badge-lower {
+    background-color: #d1fae5;
+    color: #047857;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    font-weight: 600;
+    padding: 0.55rem 1.15rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.2);
+    transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+/* Form Controls */
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.form-control, .form-select {
+    font-size: 0.88rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    border-color: var(--border-color);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
     .layout {
         flex-direction: column;

@@ -1,26 +1,112 @@
 {% extends "base.html" %}
-{% block title %}Settings - FraudGuard{% endblock %}
+{% block title %}Risk Policy Settings - FraudGuard Enterprise{% endblock %}
 {% block content %}
-<h3>Settings</h3>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="h4 mb-1 fw-bold text-dark">Risk Policy &amp; Threshold Configuration</h2>
+        <p class="text-muted mb-0 small">Adjust the operational decision boundary controlling the Precision vs. Recall balance in production.</p>
+    </div>
+</div>
+
 {% for m in messages %}
-<div class="alert alert-success">{{ m }}</div>
+<div class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert">
+    <i class="bi bi-check-circle-fill"></i>
+    <div>{{ m }}</div>
+</div>
 {% endfor %}
-<div class="card p-4 shadow-sm col-md-6 mt-3">
-    <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label class="form-label fw-bold">Fraud Alert Threshold: <span id="tv" class="text-primary fs-5">{{ setting.threshold }}</span>%</label>
-            <input type="range" name="threshold" min="1" max="99" value="{{ setting.threshold }}"
-                class="form-range" oninput="document.getElementById('tv').textContent = this.value">
-            <div class="form-text mt-2 text-muted">
-                Transactions scoring at or above this risk score will trigger an immediate Fraud Alert.
-                <br>
-                <em>Lower threshold (e.g. 30%) = Catches more potential fraud, but creates more false alarms.</em>
-                <br>
-                <em>Higher threshold (e.g. 90%) = Only flags transactions with extreme confidence.</em>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <h5 class="h6 mb-3 fw-bold text-dark pb-2 border-bottom">
+                <i class="bi bi-sliders text-primary me-2"></i>Global Decision Threshold
+            </h5>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label fw-bold mb-0 text-dark">Alert Trigger Score:</label>
+                        <span class="fs-4 fw-bold text-primary px-3 py-1 rounded bg-primary-subtle border border-primary-subtle" id="tv">
+                            {{ setting.threshold }}%
+                        </span>
+                    </div>
+
+                    <input type="range" name="threshold" min="1" max="99" value="{{ setting.threshold }}"
+                        class="form-range my-3" id="threshold-range"
+                        oninput="updateThresholdLabel(this.value)">
+
+                    <div class="d-flex justify-content-between text-muted text-xs mb-3" style="font-size: 0.75rem;">
+                        <span>1% (Catch Everything / High False Alarms)</span>
+                        <span>50% (Default)</span>
+                        <span>99% (Strict / Zero False Alarms)</span>
+                    </div>
+
+                    <div class="p-3 rounded bg-light border" id="mode-explanation">
+                        <div class="fw-semibold text-dark small mb-1" id="mode-title">
+                            <i class="bi bi-shield-check text-success me-1"></i> Balanced Detection Mode (Recommended)
+                        </div>
+                        <div class="text-secondary small" id="mode-desc">
+                            Balances high fraud recall (catching attacks) while keeping customer false alarms below 1.5%.
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-floppy-fill"></i>
+                    <span>Apply Production Threshold</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Educational Viva Note -->
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <h5 class="h6 mb-3 fw-bold text-dark pb-2 border-bottom">
+                <i class="bi bi-info-circle-fill text-primary me-2"></i>How the Threshold Knob Works
+            </h5>
+            <div class="text-secondary small">
+                <p>In machine learning for fraud detection, models output a continuous probability $P(\text{fraud}) \in [0, 1]$, mapped to a Risk Score from 0 to 100.</p>
+                <div class="mb-3">
+                    <strong class="text-dark">If you lower the threshold (e.g. 25%):</strong>
+                    <ul class="mb-1 ps-3 text-muted">
+                        <li><strong>Recall increases:</strong> Catches nearly 100% of fraud attacks.</li>
+                        <li><strong>Precision drops:</strong> Innocent users face OTP challenges or temporary holds.</li>
+                    </ul>
+                </div>
+                <div>
+                    <strong class="text-dark">If you raise the threshold (e.g. 80%):</strong>
+                    <ul class="mb-0 ps-3 text-muted">
+                        <li><strong>Precision increases:</strong> Every raised alarm is almost guaranteed fraud.</li>
+                        <li><strong>Recall drops:</strong> Sneaky low-value test attacks may slip through unnoticed.</li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <button class="btn btn-primary">Save Threshold</button>
-    </form>
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateThresholdLabel(val) {
+    document.getElementById('tv').textContent = val + '%';
+    const num = Number(val);
+    const title = document.getElementById('mode-title');
+    const desc = document.getElementById('mode-desc');
+
+    if (num < 35) {
+        title.innerHTML = '<i class="bi bi-shield-exclamation text-warning me-1"></i> High Sensitivity (Maximum Catch Mode)';
+        desc.textContent = 'Favors Recall over Precision. Useful during identified cyber-attack waves or festival fraud surges.';
+    } else if (num > 65) {
+        title.innerHTML = '<i class="bi bi-shield-lock text-info me-1"></i> Strict Confidence Mode';
+        desc.textContent = 'Minimizes false alarms. Only transactions with extreme mathematical certainty trigger automated freeze.';
+    } else {
+        title.innerHTML = '<i class="bi bi-shield-check text-success me-1"></i> Balanced Detection Mode (Recommended)';
+        desc.textContent = 'Industry benchmark standard. Optimal F1-score with balanced Precision and Recall.';
+    }
+}
+updateThresholdLabel({{ setting.threshold }});
+</script>
 {% endblock %}

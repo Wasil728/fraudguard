@@ -3,32 +3,121 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}FraudGuard{% endblock %}</title>
+    <title>{% block title %}FraudGuard Enterprise{% endblock %}</title>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5.3 & Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     {% load static %}
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 </head>
 <body>
-    <div class="layout d-flex">
-        <nav class="sidebar bg-dark text-white p-3">
-            <h5 class="mb-4 text-white">FraudGuard</h5>
-            <a href="{% url 'dashboard' %}" class="nav-link text-white-50 mb-2">Dashboard</a>
-            <a href="{% url 'simulator' %}" class="nav-link text-white-50 mb-2">Transaction Simulator</a>
-            <a href="{% url 'alerts' %}" class="nav-link text-white-50 mb-2">Fraud Alerts</a>
-            <a href="{% url 'analytics' %}" class="nav-link text-white-50 mb-2">Analytics</a>
-            <a href="{% url 'settings' %}" class="nav-link text-white-50 mb-2">Settings</a>
+    <div class="layout d-flex min-vh-100">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand-wrapper d-flex align-items-center gap-3">
+                <div class="brand-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div>
+                    <h1 class="h6 mb-0 text-white fw-bold tracking-tight">FraudGuard</h1>
+                    <span class="text-xs text-slate-400" style="font-size: 0.72rem; color: #94a3b8;">Real-Time UPI Shield</span>
+                </div>
+            </div>
+
+            <!-- System Live Status -->
+            <div class="px-3 pt-3">
+                <div class="d-flex align-items-center gap-2 px-3 py-2 rounded-2" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2);">
+                    <span class="spinner-grow spinner-grow-sm text-success" style="width: 8px; height: 8px;" role="status"></span>
+                    <span style="font-size: 0.72rem; font-weight: 600; color: #10b981;">XGBoost 2.0.3 · Live</span>
+                </div>
+            </div>
+
+            <!-- Navigation Sections -->
+            <div class="nav-section-title">CORE CONSOLE</div>
+            <nav class="d-flex flex-column gap-1 px-1">
+                <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'simulator' %}" class="nav-link {% if request.resolver_match.url_name == 'simulator' %}active{% endif %}">
+                    <i class="bi bi-cpu"></i>
+                    <span>Transaction Simulator</span>
+                </a>
+                <a href="{% url 'alerts' %}" class="nav-link {% if request.resolver_match.url_name == 'alerts' or request.resolver_match.url_name == 'alert_detail' %}active{% endif %}">
+                    <i class="bi bi-bell"></i>
+                    <span>Fraud Alerts</span>
+                </a>
+                <a href="{% url 'analytics' %}" class="nav-link {% if request.resolver_match.url_name == 'analytics' %}active{% endif %}">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Model Analytics</span>
+                </a>
+                <a href="{% url 'settings' %}" class="nav-link {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                    <i class="bi bi-sliders"></i>
+                    <span>Risk Thresholds</span>
+                </a>
+            </nav>
+
             {% if request.user.is_staff %}
-            <a href="/admin/" class="nav-link text-warning mb-2">Admin Panel</a>
+            <div class="nav-section-title">ADMINISTRATION</div>
+            <nav class="d-flex flex-column gap-1 px-1">
+                <a href="/admin/" class="nav-link text-warning" target="_blank">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Django Admin</span>
+                </a>
+            </nav>
             {% endif %}
-            <form method="post" action="{% url 'logout' %}" class="mt-4">
-                {% csrf_token %}
-                <button class="btn btn-sm btn-outline-light w-100">Logout</button>
-            </form>
-        </nav>
-        <main class="flex-grow-1 p-4">
-            {% block content %}{% endblock %}
+
+            <!-- User Profile & Session Footer -->
+            <div class="mt-auto p-3 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="d-flex align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold" style="width: 32px; height: 32px; font-size: 0.85rem;">
+                            {{ request.user.username|make_list|first|upper }}
+                        </div>
+                        <div style="line-height: 1.2;">
+                            <div class="text-white fw-semibold" style="font-size: 0.82rem;">{{ request.user.username }}</div>
+                            <div style="font-size: 0.7rem; color: #94a3b8;">Fraud Analyst</div>
+                        </div>
+                    </div>
+                    <form method="post" action="{% url 'logout' %}" class="m-0">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-link text-secondary p-0 text-decoration-none" title="Log out">
+                            <i class="bi bi-box-arrow-right fs-6"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow-1 d-flex flex-column">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted" style="font-size: 0.82rem;">Minor Project AD-508</span>
+                    <span class="text-muted">/</span>
+                    <span class="fw-semibold text-dark" style="font-size: 0.85rem;">FraudGuard Real-Time UPI Engine</span>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 0.75rem;">
+                        <i class="bi bi-clock-history me-1"></i> Inference &lt; 2ms
+                    </span>
+                    <span class="badge bg-light text-secondary border px-2 py-1" style="font-size: 0.75rem;">
+                        <i class="bi bi-database-check me-1"></i> PaySim Benchmark
+                    </span>
+                </div>
+            </header>
+
+            <div class="p-4 flex-grow-1">
+                {% block content %}{% endblock %}
+            </div>
         </main>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     {% block scripts %}{% endblock %}
