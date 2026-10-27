@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Simulator - FraudGuard{% endblock %}
+{% block content %}
+<h3>Transaction Simulator</h3>
+<div class="row mt-3">
+    <div class="col-md-6">
+        <div class="card p-4 shadow-sm">
+            <form id="txn-form">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <label class="form-label">Type</label>
+                    <select name="txn_type" class="form-select">
+                        <option>TRANSFER</option>
+                        <option>CASH_OUT</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Sender ID</label>
+                    <input name="sender_id" class="form-control" value="C1001" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Receiver ID</label>
+                    <input name="receiver_id" class="form-control" value="C2002" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Amount</label>
+                    <input name="amount" type="number" step="0.01" min="0.01" class="form-control" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Sender balance before</label>
+                    <input name="old_balance_org" type="number" step="0.01" min="0" class="form-control" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Sender balance after</label>
+                    <input name="new_balance_org" type="number" step="0.01" min="0" class="form-control" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Receiver balance before</label>
+                    <input name="old_balance_dest" type="number" step="0.01" min="0" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Receiver balance after</label>
+                    <input name="new_balance_dest" type="number" step="0.01" min="0" class="form-control" required>
+                </div>
+                <div class="d-flex gap-2 mb-3">
+                    <button class="btn btn-primary">Check risk</button>
+                    <button type="button" class="btn btn-outline-danger" id="fill-fraud">Fill fraud-like example</button>
+                    <button type="button" class="btn btn-outline-success" id="fill-normal">Fill normal example</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div id="result" class="card p-4 shadow-sm d-none"></div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const form = document.getElementById("txn-form");
+const resultBox = document.getElementById("result");
+
+function setValues(type, amount, oldOrg, newOrg, oldDest, newDest) {
+    form.elements["txn_type"].value = type;
+    form.elements["amount"].value = amount;
+    form.elements["old_balance_org"].value = oldOrg;
+    form.elements["new_balance_org"].value = newOrg;
+    form.elements["old_balance_dest"].value = oldDest;
+    form.elements["new_balance_dest"].value = newDest;
+}
+
+document.getElementById("fill-fraud").addEventListener("click", function () {
+    setValues("TRANSFER", 250000, 250000, 0, 0, 0); // whole balance is sent away
+});
+
+document.getElementById("fill-normal").addEventListener("click", function () {
+    setValues("TRANSFER", 5000, 80000, 75000, 20000, 25000); // small normal transfer
+});
+
+form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const fields = [
+        "txn_type", "sender_id", "receiver_id", "amount",
+        "old_balance_org", "new_balance_org",
+        "old_balance_dest", "new_balance_dest"
+    ];
+    const data = {};
+    for (const name of fields) {
+        data[name] = form.elements[name].value;
+    }
+    const token = form.elements["csrfmiddlewaretoken"].value;
+
+    resultBox.classList.remove("d-none");
+    resultBox.innerHTML = "<div class='text-muted'>Evaluating transaction with ML model...</div>";
+
+    try {
+        const response = await fetch("/api/transactions/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json", "X-CSRFToken": token},
+            body: JSON.stringify(data),
+        });
+        const answer = await response.json();
+
+        if (!response.ok) {
+            resultBox.innerHTML = "<div class='alert alert-danger'>Error: " + (answer.error || answer.detail) + "</div>";
+            return;
+        }
+
+        let reasonsHtml = "";
+        for (const r of answer.explanation) {
+            let direction = "lowers";
+            let badgeClass = "badge bg-success";
+            if (r.impact > 0) { 
+                direction = "raises"; 
+                badgeClass = "badge bg-danger";
+            }
+            reasonsHtml += "<li class='mb-1'>" + r.feature + " <span class='" + badgeClass + "'>" + direction + " risk (" + r.impact + ")</span></li>";
+        }
+
+        let colour = "text-success";
+        let verdict = "Looks safe";
+        let cardBorder = "border-success";
+        if (answer.is_fraud) {
+            colour = "text-danger";
+            verdict = "FRAUD SUSPECTED - Alert Created";
+            cardBorder = "border-danger";
+        }
+
+        resultBox.className = "card p-4 shadow-sm " + cardBorder;
+        resultBox.innerHTML =
+            "<h5>Risk score: <span class='" + colour + " fw-bold'>" + answer.risk_score + "</span> / 100</h5>" +
+            "<p class='" + colour + " fw-bold fs-5'>" + verdict + " (threshold " + answer.threshold + ")</p>" +
+            "<h6 class='mt-3'>Why? Top Factors (SHAP Explanation):</h6>" +
+            "<ul class='list-unstyled ps-2'>" + reasonsHtml + "</ul>";
+    } catch (err) {
+        resultBox.innerHTML = "<div class='alert alert-danger'>Network error: " + err.message + "</div>";
+    }
+});
+</script>
+{% endblock %}

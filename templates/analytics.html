@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Analytics - FraudGuard{% endblock %}
+{% block content %}
+<h3>Analytics</h3>
+<div class="row g-3 mt-1">
+    <div class="col-lg-8">
+        <div class="card p-3 shadow-sm">
+            <h6 class="mb-3">Transactions and Flagged Fraud Per Day</h6>
+            <canvas id="trend"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card p-3 shadow-sm">
+            <h6 class="mb-3">Model Performance (Test Set)</h6>
+            {% if metric %}
+            <canvas id="perf"
+                data-precision="{{ metric.precision|floatformat:4 }}"
+                data-recall="{{ metric.recall|floatformat:4 }}"
+                data-f1-score="{{ metric.f1_score|floatformat:4 }}"
+                data-pr-auc="{{ metric.pr_auc|floatformat:4 }}"></canvas>
+            {% else %}
+            <p class="text-muted">No metrics yet. Run: <code>python manage.py seed_demo</code></p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function drawTrend() {
+    try {
+        const response = await fetch("/api/analytics/trend/");
+        const rows = await response.json();
+        const days = [];
+        const totals = [];
+        const frauds = [];
+        for (const row of rows) {
+            days.push(row.day);
+            totals.push(row.total);
+            frauds.push(row.fraud);
+        }
+        new Chart(document.getElementById("trend"), {
+            type: "line",
+            data: {
+                labels: days,
+                datasets: [
+                    {label: "All transactions", data: totals, borderColor: "#0d6efd", tension: 0.2},
+                    {label: "Flagged fraud", data: frauds, borderColor: "#dc3545", tension: 0.2},
+                ],
+            },
+        });
+    } catch (e) {
+        console.error("Failed to load trend data", e);
+    }
+}
+drawTrend();
+
+const perfCanvas = document.getElementById("perf");
+if (perfCanvas) {
+    new Chart(perfCanvas, {
+        type: "bar",
+        data: {
+            labels: ["Precision", "Recall", "F1", "PR-AUC"],
+            datasets: [{
+                data: [
+                    Number(perfCanvas.dataset.precision),
+                    Number(perfCanvas.dataset.recall),
+                    Number(perfCanvas.dataset.f1Score),
+                    Number(perfCanvas.dataset.prAuc),
+                ],
+                backgroundColor: ["#0d6efd", "#198754", "#ffc107", "#0dcaf0"]
+            }],
+        },
+        options: {
+            plugins: {legend: {display: false}}, 
+            scales: {y: {min: 0, max: 1}}
+        },
+    });
+}
+</script>
+{% endblock %}

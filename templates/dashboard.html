@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - FraudGuard{% endblock %}
+{% block content %}
+<h3>Dashboard</h3>
+<div class="row g-3 my-3">
+    <div class="col-6 col-md-3">
+        <div class="card p-3 shadow-sm">
+            <small class="text-muted">Total transactions</small>
+            <h4 class="mt-2">{{ total }}</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card p-3 shadow-sm">
+            <small class="text-muted">Flagged as fraud</small>
+            <h4 class="mt-2 text-danger">{{ flagged }}</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card p-3 shadow-sm">
+            <small class="text-muted">Flagged %</small>
+            <h4 class="mt-2">{{ pct }}%</h4>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card p-3 shadow-sm">
+            <small class="text-muted">Model F1-score</small>
+            <h4 class="mt-2">{% if metric %}{{ metric.f1_score|floatformat:3 }}{% else %}-{% endif %}</h4>
+        </div>
+    </div>
+</div>
+
+<h5 class="mt-4 mb-3">Recent alerts</h5>
+<div class="card shadow-sm p-3">
+    <table class="table table-sm table-hover align-middle mb-0">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Amount</th>
+                <th>Score</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in recent %}
+            <tr>
+                <td>#{{ a.id }}</td>
+                <td>{{ a.transaction.amount }}</td>
+                <td class="risk-high">{{ a.transaction.risk_score }}</td>
+                <td><span class="badge bg-secondary">{{ a.status }}</span></td>
+                <td><a href="{% url 'alert_detail' a.pk %}" class="btn btn-sm btn-outline-primary">View</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-muted text-center py-3">No alerts yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

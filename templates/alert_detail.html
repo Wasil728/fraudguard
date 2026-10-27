@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Alert #{{ alert.id }} - FraudGuard{% endblock %}
+{% block content %}
+<a href="{% url 'alerts' %}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back to alerts</a>
+<h3>Alert #{{ alert.id }}</h3>
+<div class="card p-4 shadow-sm mb-4">
+    <div class="row">
+        <div class="col-md-6">
+            <p class="mb-1"><strong>Type:</strong> {{ alert.transaction.txn_type }}</p>
+            <p class="mb-1"><strong>Amount:</strong> ₹{{ alert.transaction.amount }}</p>
+            <p class="mb-1"><strong>Sender:</strong> {{ alert.transaction.sender_id }} (Balance: {{ alert.transaction.old_balance_org }} &rarr; {{ alert.transaction.new_balance_org }})</p>
+            <p class="mb-1"><strong>Receiver:</strong> {{ alert.transaction.receiver_id }} (Balance: {{ alert.transaction.old_balance_dest }} &rarr; {{ alert.transaction.new_balance_dest }})</p>
+        </div>
+        <div class="col-md-6">
+            <p class="mb-1"><strong>Risk Score:</strong> <span class="risk-high fs-5 fw-bold">{{ alert.transaction.risk_score }} / 100</span></p>
+            <p class="mb-1"><strong>Timestamp:</strong> {{ alert.created_at|date:"Y-m-d H:i:s" }}</p>
+            <p class="mb-1" id="status-label"><strong>Current Status:</strong> <span class="badge bg-primary">{{ alert.status }}</span></p>
+        </div>
+    </div>
+</div>
+
+<div class="card p-4 shadow-sm mb-4">
+    <h5 class="mb-3">SHAP Feature Impact Breakdown</h5>
+    <canvas id="shapChart" height="120"></canvas>
+</div>
+
+<div class="d-flex align-items-center gap-2">
+    <button class="btn btn-success" data-status="reviewed">Mark as Reviewed</button>
+    <button class="btn btn-outline-secondary" data-status="dismissed">Dismiss as False Alarm</button>
+</div>
+
+<form id="csrf-holder">{% csrf_token %}</form>
+{{ alert.shap_explanation|json_script:"shap-data" }}
+{% endblock %}
+{% block scripts %}
+<script>
+const reasons = JSON.parse(document.getElementById("shap-data").textContent);
+const labels = [];
+const impacts = [];
+const colours = [];
+for (const r of reasons) {
+    labels.push(r.feature);
+    impacts.push(r.impact);
+    if (r.impact >= 0) { colours.push("#dc3545"); } else { colours.push("#198754"); }
+}
+
+new Chart(document.getElementById("shapChart"), {
+    type: "bar",
+    data: {
+        labels: labels,
+        datasets: [{ label: "Impact on Fraud Score (SHAP)", data: impacts, backgroundColor: colours }],
+    },
+    options: { indexAxis: "y" },
+});
+
+const token = document.querySelector("#csrf-holder [name=csrfmiddlewaretoken]").value;
+const buttons = document.querySelectorAll("[data-status]");
+for (const button of buttons) {
+    button.addEventListener("click", async function () {
+        const newStatus = button.dataset.status;
+        const response = await fetch("/api/alerts/{{ alert.id }}/", {
+            method: "PATCH",
+            headers: {"Content-Type": "application/json", "X-CSRFToken": token},
+            body: JSON.stringify({status: newStatus}),
+        });
+        if (response.ok) {
+            document.getElementById("status-label").innerHTML = "<strong>Current Status:</strong> <span class='badge bg-success'>" + newStatus + "</span>";
+        }
+    });
+}
+</script>
+{% endblock %}

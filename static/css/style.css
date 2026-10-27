@@ -1,8 +1,58 @@
-/* static/css/style.css — will be expanded in later steps */
+/* static/css/style.css */
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: #f4f6f9;
     margin: 0;
     padding: 0;
+    color: #333;
+}
+
+.layout {
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    min-width: 250px;
+    min-height: 100vh;
+    background-color: #1e293b !important;
+}
+
+.sidebar h5 {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.sidebar .nav-link {
+    font-size: 0.95rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+}
+
+.risk-high {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+.risk-low {
+    color: #198754;
+    font-weight: 700;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+}
+
+table th {
+    font-weight: 600;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
 }
