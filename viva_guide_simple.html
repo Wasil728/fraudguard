@@ -315,6 +315,52 @@
     <p style="margin: 0;"><strong>Answer:</strong> <em>"Ma'am, FraudGuard is designed for the <strong>Bank Central Switch / Core Banking System (like NPCI)</strong>, which manages both sender and receiver banks. If the receiver is outside the network and their balance is hidden, our system sets it to 0 and treats it as an external unverified account."</em></p>
 </div>
 
+<!-- PART 4B -->
+<h2>Part 4B: The Parameters Behind the Simulator (Why These 8 Inputs?)</h2>
+<p>If the teacher points to the simulator and asks: <em>"What are all these parameters? Why did you pick these exact 8 inputs?"</em></p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 25%;">Parameter Name</th>
+            <th style="width: 20%;">What It Holds</th>
+            <th style="width: 55%;">Why It Is Needed for Fraud Detection</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>txn_type</code></td>
+            <td>TRANSFER or CASH_OUT</td>
+            <td>PaySim data proved 100% of frauds happen in these 2 types. Normal payments (tea stall, grocery) have 0 fraud.</td>
+        </tr>
+        <tr>
+            <td><code>amount</code></td>
+            <td>₹ Value of Transfer</td>
+            <td>Measures transaction volume. Big amounts raise attention, but amount alone is not enough to flag fraud.</td>
+        </tr>
+        <tr>
+            <td><code>sender_id</code> &amp; <code>receiver_id</code></td>
+            <td>UPI IDs (e.g. user@upi)</td>
+            <td>Identifies the two parties to track previous history, account age, and known mule account lists.</td>
+        </tr>
+        <tr>
+            <td><code>old_balance_org</code> &amp; <code>new_balance_org</code></td>
+            <td>Sender Balances Before &amp; After</td>
+            <td><strong>The #1 Clue (Account Drainage):</strong> Checks if the sender was wiped to ₹0. Fraudsters drain 100% of savings before the victim notices.</td>
+        </tr>
+        <tr>
+            <td><code>old_balance_dest</code> &amp; <code>new_balance_dest</code></td>
+            <td>Receiver Balances Before &amp; After</td>
+            <td>Tracks the destination. In an Account Drain attack, the receiver receives the ₹2,50,000 into their mule account (₹0 &rarr; ₹2,50,000).</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="box box-story">
+    <div class="box-title">The Hidden 10-Feature Vector:</div>
+    <p style="margin: 0;">When the user clicks 'Run Risk Evaluation', the Django backend takes these 8 inputs, calculates the 2 math error clues (<code>errorBalanceOrig</code> and <code>errorBalanceDest</code>), and creates a <strong>10-feature array</strong> that is passed into <code>XGBoost.predict_proba()</code> in just 1.8 milliseconds!</p>
+</div>
+
 <div class="page-break"></div>
 
 <!-- PART 5 -->

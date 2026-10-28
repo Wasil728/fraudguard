@@ -163,11 +163,11 @@ function setValues(type, amount, oldOrg, newOrg, oldDest, newDest) {
 
 // Preset Scenario Handlers
 document.getElementById("fill-fraud-drain").addEventListener("click", function () {
-    setValues("TRANSFER", 250000, 250000, 0, 0, 0); // complete drain
+    setValues("TRANSFER", 250000, 250000, 0, 0, 250000); // 100% account drainage to thief
 });
 
 document.getElementById("fill-fraud-cashout").addEventListener("click", function () {
-    setValues("CASH_OUT", 100000, 100000, 0, 0, 0); // complete cash-out drain
+    setValues("CASH_OUT", 100000, 100000, 0, 20000, 120000); // drain account via cash-out withdrawal
 });
 
 document.getElementById("fill-normal-upi").addEventListener("click", function () {
