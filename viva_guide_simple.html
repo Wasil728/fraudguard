@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FraudGuard - Super Easy Viva & Presentation Guide</title>
+<style>
+    @page {
+        size: A4;
+        margin: 16mm 14mm;
+        @bottom-right {
+            content: "Page " counter(page);
+            font-size: 8pt;
+            color: #64748b;
+        }
+    }
+    body {
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+        color: #1e293b;
+        background: #ffffff;
+        line-height: 1.6;
+        font-size: 10pt;
+        margin: 0;
+        padding: 0;
+    }
+    h1, h2, h3, h4 {
+        color: #0f172a;
+        font-weight: 700;
+        margin-top: 1.2em;
+        margin-bottom: 0.3em;
+        page-break-after: avoid;
+    }
+    h1 {
+        font-size: 19pt;
+        border-bottom: 2px solid #2563eb;
+        padding-bottom: 6px;
+        margin-top: 0;
+    }
+    h2 {
+        font-size: 13.5pt;
+        border-bottom: 1px solid #cbd5e1;
+        padding-bottom: 4px;
+        color: #1e3a8a;
+        margin-top: 1.1em;
+    }
+    h3 {
+        font-size: 11pt;
+        color: #0f172a;
+        margin-top: 0.8em;
+    }
+    p {
+        margin-top: 0.2em;
+        margin-bottom: 0.5em;
+    }
+    ul, ol {
+        margin-top: 0.2em;
+        margin-bottom: 0.5em;
+        padding-left: 20px;
+    }
+    li {
+        margin-bottom: 0.25em;
+    }
+    code {
+        font-family: 'Consolas', monospace;
+        background: #f1f5f9;
+        color: #0f172a;
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 9pt;
+        border: 1px solid #e2e8f0;
+    }
+
+    .banner {
+        background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+        color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .banner h1 {
+        color: #ffffff;
+        border-bottom: none;
+        margin: 0 0 6px 0;
+        font-size: 20pt;
+    }
+    .banner p {
+        color: #93c5fd;
+        font-size: 10.5pt;
+        margin: 0 0 10px 0;
+    }
+    .banner .tags {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .banner .tag {
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 8pt;
+        color: #ffffff;
+    }
+
+    .box {
+        border-radius: 6px;
+        padding: 10px 14px;
+        margin: 0.7em 0;
+        page-break-inside: avoid;
+    }
+    .box-speak {
+        background: #f0fdf4;
+        border-left: 4px solid #16a34a;
+        border: 1px solid #bbf7d0;
+        border-left-width: 5px;
+    }
+    .box-story {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-left: 5px solid #2563eb;
+    }
+    .box-trap {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-left: 5px solid #dc2626;
+    }
+    .box-tip {
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        border-left: 5px solid #d97706;
+    }
+    .box-title {
+        font-weight: 700;
+        font-size: 9.5pt;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .box-speak .box-title { color: #15803d; }
+    .box-story .box-title { color: #1d4ed8; }
+    .box-trap .box-title  { color: #b91c1c; }
+    .box-tip .box-title   { color: #b45309; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0.7em 0;
+        font-size: 9pt;
+        page-break-inside: avoid;
+    }
+    th, td {
+        border: 1px solid #cbd5e1;
+        padding: 6px 10px;
+        text-align: left;
+    }
+    th {
+        background: #f1f5f9;
+        color: #0f172a;
+        font-weight: 700;
+    }
+    tr:nth-child(even) td {
+        background: #f8fafc;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 2px 7px;
+        border-radius: 4px;
+        font-size: 8pt;
+        font-weight: 700;
+    }
+    .badge-green { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+    .badge-blue  { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+    .badge-red   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+    .badge-amber { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+
+    .page-break {
+        page-break-after: always;
+    }
+</style>
+</head>
+<body>
+
+<!-- Header Banner -->
+<div class="banner">
+    <h1>FraudGuard - Super Easy Viva Guide</h1>
+    <p>Everything Explained in Everyday Simple English for Presentation & Viva</p>
+    <div class="tags">
+        <span class="tag">Minor Project-I (AD-508)</span>
+        <span class="tag">SISTec Dept. of AI & Data Science</span>
+        <span class="tag">Team: Wasil, Tayyab, Haseeb, Sufiyan</span>
+    </div>
+</div>
+
+<div class="box box-tip">
+    <div class="box-title">🎯 Why This Guide Exists</div>
+    <p style="margin: 0;">We wrote this guide without any confusing bookish words or complicated math terms. Every concept is broken down into simple, real-life examples so that <strong>any team member can speak confidently and answer any question without getting stuck</strong>.</p>
+</div>
+
+<!-- PART 1 -->
+<h2>Part 1: What is FraudGuard in 2 Simple Lines?</h2>
+<p>If the teacher asks: <em>"Tell me in simple words, what does your project do?"</em></p>
+
+<div class="box box-speak">
+    <div class="box-title">🗣️ What You Say:</div>
+    <p style="margin: 0; font-size: 10.5pt;">
+        <strong>"Ma'am, FraudGuard is a real-time security system for UPI and bank payments. When someone makes a payment, our system checks it in less than 2 milliseconds using Machine Learning. If it looks like a fraud attack, it immediately flags it and explains in simple words why it was blocked."</strong>
+    </p>
+</div>
+
+<h3>Why do banks need this? Why do old bank rules fail?</h3>
+<ul>
+    <li><strong>Old Way (Simple Rules):</strong> Old banks set fixed rules like: <em>"If a transfer is more than ₹50,000, stop it."</em></li>
+    <li><strong>How Thieves Beat It:</strong> A smart hacker simply sends ₹49,000 twice! The old rule never triggers.</li>
+    <li><strong>The FraudGuard Way:</strong> Our system does not just look at the amount. It looks at the <strong>behavior pattern</strong>: <em>"Did this person have ₹50,000 and suddenly their entire balance dropped to zero in 2 seconds?"</em> Thieves cannot hide this pattern.</li>
+</ul>
+
+<!-- PART 2 -->
+<h2>Part 2: The 5 Simple Parts of the Project</h2>
+<p>If the teacher asks: <em>"Walk me through the system architecture."</em></p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 20%;">Component</th>
+            <th style="width: 25%;">Technology</th>
+            <th style="width: 55%;">Simple Meaning (What it actually does)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>1. Frontend (Website)</strong></td>
+            <td>HTML, CSS, Bootstrap, Chart.js</td>
+            <td>The clean website where bank officers can test payments on a simulator, see risk gauges, and review fraud alerts.</td>
+        </tr>
+        <tr>
+            <td><strong>2. Backend Server</strong></td>
+            <td>Python &amp; Django</td>
+            <td>The main brain. It receives the payment details from the website, checks them, calls the AI model, and sends back the answer.</td>
+        </tr>
+        <tr>
+            <td><strong>3. Smart Math Clues</strong></td>
+            <td>Feature Engineering</td>
+            <td>Two quick formulas that check if the sender and receiver account balances make sense.</td>
+        </tr>
+        <tr>
+            <td><strong>4. The ML Model</strong></td>
+            <td>XGBoost 2.0.3</td>
+            <td>The trained AI model that gives a Risk Score from 0 to 100 in 1.8 milliseconds.</td>
+        </tr>
+        <tr>
+            <td><strong>5. Database</strong></td>
+            <td>MySQL 8.0</td>
+            <td>The digital ledger that safely saves all transactions, fraud alerts, and settings.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- PART 3 -->
+<h2>Part 3: The Dataset (Why "PaySim" and Not Real Google Pay Data?)</h2>
+
+<div class="box box-trap">
+    <div class="box-title">⚠️ Common Teacher Question: "Why didn't you collect real Google Pay or PhonePe data?"</div>
+    <div class="box-speak" style="border: none; padding: 0; background: transparent;">
+        <p style="margin: 0;"><strong>Say this with confidence:</strong><br>
+        <em>"Ma'am, real bank transactions contain private customer details like mobile numbers, bank balances, and UPI PINs. Under RBI privacy rules and the Indian Data Protection Law, no bank or app like PhonePe or Google Pay is legally allowed to share real customer transaction logs with students or the public."</em></p>
+    </div>
+</div>
+
+<h3>What is PaySim?</h3>
+<ul>
+    <li><strong>What it is:</strong> PaySim is an open academic dataset created by university researchers from real mobile money logs. It is used in fraud research worldwide.</li>
+    <li><strong>Size:</strong> It contains <strong>63 lakh (6.36 million)</strong> transactions.</li>
+    <li><strong>Class Imbalance (The 99.87% Fact):</strong>
+        <ul>
+            <li>Out of 63 lakh transactions, only <strong>8,213 are fraud (0.13%)</strong>.</li>
+            <li><strong>99.87% of transactions are completely honest!</strong></li>
+            <li>This is just like real life: on a normal day, out of 1,000 UPI payments, maybe only 1 is a fraud attempt.</li>
+        </ul>
+    </li>
+    <li><strong>Where Fraud Happens:</strong> In PaySim, all fraud happens in only 2 payment types: <code>TRANSFER</code> (sending money to someone) and <code>CASH_OUT</code> (withdrawing money through an agent or ATM). Normal merchant payments (like paying at a tea stall) had 0 fraud. So our model focuses on these two risky types.</li>
+</ul>
+
+<!-- PART 4 -->
+<h2>Part 4: The 2 Smart Math Clues (Feature Engineering)</h2>
+<p>If you only give raw numbers (Amount, Balance) to an AI, it gets confused. We created <strong>two simple math clues</strong> that instantly reveal a thief.</p>
+
+<div class="box box-story">
+    <div class="box-title">Clue 1: Sender Balance Math (<code>errorBalanceOrig</code>)</div>
+    <p><strong>The Basic Logic:</strong><br>
+    <em>Starting Balance - Money Sent = Ending Balance</em></p>
+    <ul>
+        <li><strong>In Normal Payments:</strong> You have ₹10,000. You send ₹2,000 to a friend. Your new balance must be ₹8,000.<br>
+        Math: <code>New Balance (8,000) + Sent (2,000) - Old Balance (10,000) = 0</code>. <span class="badge badge-green">Error = 0 (Normal)</span></li>
+        <li><strong>In Fraud (Account Drain):</strong> A hacker breaks into an account with ₹1,00,000. They send ₹1,00,000 away! The victim's balance drops to <strong>₹0</strong> immediately. The math breaks completely, and our equation catches it instantly!</li>
+    </ul>
+</div>
+
+<div class="box box-story">
+    <div class="box-title">Clue 2: Receiver Balance Math (<code>errorBalanceDest</code>)</div>
+    <p><strong>The Basic Logic:</strong><br>
+    <em>Receiver Old Balance + Money Received = Receiver New Balance</em></p>
+    <ul>
+        <li><strong>In Normal Payments:</strong> The receiver's balance increases by the exact amount sent. The error is 0.</li>
+        <li><strong>In Fraud (Mule Accounts):</strong> Thieves send stolen money to newly made "mule" accounts and immediately withdraw it at an ATM so the police cannot freeze it. The receiver's balance shows an unnatural jump or stays at 0.</li>
+    </ul>
+</div>
+
+<div class="box box-tip">
+    <div class="box-title">💡 Teacher Trap: "How do you know the receiver's balance in real UPI?"</div>
+    <p style="margin: 0;"><strong>Answer:</strong> <em>"Ma'am, FraudGuard is designed for the <strong>Bank Central Switch / Core Banking System (like NPCI)</strong>, which manages both sender and receiver banks. If the receiver is outside the network and their balance is hidden, our system sets it to 0 and treats it as an external unverified account."</em></p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- PART 5 -->
+<h2>Part 5: What is XGBoost? (Explained Simply)</h2>
+<p>If the teacher asks: <em>"What algorithm did you use, and how does it work?"</em></p>
+
+<ul>
+    <li>We used <strong>XGBoost (Extreme Gradient Boosting)</strong>.</li>
+    <li><strong>Step 1 (A Single Decision Tree):</strong> Think of a simple 20-questions game:
+        <br><em>"Is the amount greater than ₹50,000?"</em> $\rightarrow$ <em>"Did sender balance become zero?"</em> $\rightarrow$ <em>"Yes? Then it's fraud!"</em>
+        <br>A single tree can make mistakes.
+    </li>
+    <li><strong>Step 2 (Boosting = Teamwork):</strong> Instead of 1 tree, XGBoost creates a <strong>team of 100 trees, one after another</strong>:
+        <ul>
+            <li>Tree #1 makes its guesses. It gets some transactions wrong.</li>
+            <li>Tree #2 is built specifically to <strong>learn and fix the mistakes made by Tree #1</strong>.</li>
+            <li>Tree #3 fixes the mistakes of Tree #2.</li>
+        </ul>
+    </li>
+    <li>In the end, all 100 trees vote together, giving an ultra-accurate <strong>Risk Score from 0 to 100</strong>.</li>
+</ul>
+
+<div class="box box-trap">
+    <div class="box-title">⚠️ Teacher Trap: "Why didn't you use Deep Learning or Neural Networks?"</div>
+    <div class="box-speak" style="border: none; padding: 0; background: transparent;">
+        <p><strong>Give these 3 simple reasons:</strong></p>
+        <ol style="margin-bottom: 0;">
+            <li><strong>Trees are better for tables of numbers:</strong> In machine learning research, decision tree models consistently beat deep neural networks when dealing with tabular numbers (amounts, balances).</li>
+            <li><strong>Speed (Latency):</strong> In UPI, payments must complete in under 2 seconds. XGBoost takes only <strong>1.8 milliseconds</strong> on a normal CPU. Neural networks take 100 milliseconds and need expensive graphics cards (GPUs).</li>
+            <li><strong>Explainability:</strong> Banks cannot use black boxes. XGBoost works directly with SHAP to explain reasons.</li>
+        </ol>
+    </div>
+</div>
+
+<!-- PART 6 -->
+<h2>Part 6: What is SHAP? (Why does the website show Red and Green reasons?)</h2>
+<p>If the teacher points to the Simulator and asks: <em>"What are these reasons below the gauge?"</em></p>
+
+<div class="box box-story">
+    <div class="box-title">Why Banks Hate "Black Box" AI:</div>
+    <p>Imagine your bank blocks your card while you are buying groceries. You call customer service: <em>"Why did you block my card?"</em><br>
+    If the bank says: <em>"The computer AI decided it, but we don't know why"</em>, you would be furious! By banking law (RBI), banks <strong>must explain why</strong> a transaction was blocked.</p>
+</div>
+
+<ul>
+    <li><strong>SHAP</strong> stands for <strong>SH</strong>apley <strong>A</strong>dditive ex<strong>P</strong>lanations.</li>
+    <li>It calculates exactly how much points each clue contributed:
+        <ul>
+            <li><span class="badge badge-red">Red Badge (Raises Risk)</span>: e.g., <em>Sender Balance Drained to 0 (+0.45)</em>, <em>Big Transfer Amount (+0.25)</em>.</li>
+            <li><span class="badge badge-green">Green Badge (Lowers Risk)</span>: e.g., <em>Normal receiver balance growth (-0.15)</em>.</li>
+        </ul>
+    </li>
+    <li>This turns a "black box" into an <strong>open, explainable system</strong>!</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- PART 7 -->
+<h2>Part 7: Why "Accuracy" is a TRAP in Fraud Detection!</h2>
+
+<div class="box box-trap">
+    <div class="box-title">⚠️ The #1 Question Teachers Love to Ask: "What is your accuracy? Is 99% accuracy good?"</div>
+    <p style="font-size: 10.5pt; margin-bottom: 4px;"><strong>Tell this exact story to your teacher:</strong></p>
+    <div style="background: #ffffff; padding: 10px; border-radius: 5px; border: 1px solid #fecaca;">
+        <em>"Imagine 1,000 patients visit a doctor for a very rare disease that only 1 person has.<br>
+        The doctor is lazy and tells EVERY single patient: 'You are healthy, go home!' without doing any test.<br>
+        Did the doctor guess 999 out of 1,000 patients right? <strong>YES! His accuracy is 99.9%!</strong><br>
+        But did he save the sick person? <strong>NO! The patient died. His fraud-catching score is ZERO!</strong><br><br>
+        In fraud detection, 99.87% of payments are honest. If our program just approves every payment, it gets <strong>99.87% accuracy</strong>, but catches ZERO thieves! That is why Accuracy is a trap."</em>
+    </div>
+</div>
+
+<h3>The 4 Real Scores that Actually Matter:</h3>
+<table>
+    <thead>
+        <tr>
+            <th style="width: 20%;">Score Name</th>
+            <th style="width: 15%;">Our Result</th>
+            <th style="width: 35%;">Simple Meaning</th>
+            <th style="width: 30%;">Real-Life Analogy</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Recall</strong><br>(Catch Rate)</td>
+            <td><span class="badge badge-green">99.57%</span></td>
+            <td>Out of 100 real thieves, how many did we catch? (We caught 99.5%).</td>
+            <td><strong>Airport Metal Detector:</strong> It must catch 100% of weapons. We cannot afford to miss even one knife!</td>
+        </tr>
+        <tr>
+            <td><strong>Precision</strong><br>(Trust Rate)</td>
+            <td><span class="badge badge-blue">98.79%</span></td>
+            <td>When our alarm rings, how often is it a real thief vs an innocent customer?</td>
+            <td><strong>Police Arrests:</strong> If police arrest 100 people, 98.8 are real criminals and only 1.2 are innocent false alarms.</td>
+        </tr>
+        <tr>
+            <td><strong>F1-Score</strong></td>
+            <td><span class="badge badge-amber">99.18% (0.992)</span></td>
+            <td>A fair average that balances Recall and Precision together.</td>
+            <td>A student scoring 99 in Science and 98 in Math has a balanced top rank.</td>
+        </tr>
+        <tr>
+            <td><strong>PR-AUC</strong></td>
+            <td><span class="badge badge-blue">99.84% (0.998)</span></td>
+            <td>The overall score across both strict and lenient modes.</td>
+            <td>The final gold-standard grade in banking AI research.</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- PART 8 -->
+<h2>Part 8: What is the Threshold Knob in Settings?</h2>
+<p>If the teacher asks: <em>"What is that slider on your settings page?"</em></p>
+
+<ul>
+    <li>The AI calculates a risk score from 0 to 100%. The slider is our <strong>alert trigger line</strong>:</li>
+    <li><strong>If you slide it DOWN (e.g. 30%):</strong>
+        <br>The system becomes ultra-strict. It catches every single thief (High Recall), but it might stop a few honest customers by mistake (Lower Precision).
+        <br><em>Use case: During high-risk Diwali sales or cyber-attack alerts.</em>
+    </li>
+    <li><strong>If you slide it UP (e.g. 80%):</strong>
+        <br>The system only rings when it is 100% sure. Honest customers are never disturbed, but a small sneaky thief might slip through.
+    </li>
+    <li><strong>Our Default is 50%:</strong> The sweet spot with balanced F1-score.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<!-- PART 9 -->
+<h2>Part 9: Top 10 Random Teacher Questions & Simple Answers</h2>
+
+<p><strong>Q1: Where is your model saved, and how does Django use it?</strong><br>
+<strong>Answer:</strong> It is saved at <code>ml/artifacts/model.joblib</code>. When Django starts, a small Python script (<code>transactions/model_loader.py</code>) loads it into computer memory once, so it predicts instantly without reloading.</p>
+
+<p><strong>Q2: How fast is your system? What is the latency?</strong><br>
+<strong>Answer:</strong> The machine learning model takes <strong>1.8 milliseconds</strong>. The full website request (including database checks) takes only <strong>15 to 25 milliseconds</strong>, which is well within UPI's 2-second limit.</p>
+
+<p><strong>Q3: What database did you use, and what tables exist?</strong><br>
+<strong>Answer:</strong> We used <strong>MySQL 8.0</strong> with 4 tables: <code>Transaction</code> (all payments), <code>FraudAlert</code> (flagged fraud cases), <code>ModelMetric</code> (test scores), and <code>RiskSetting</code> (the threshold slider value).</p>
+
+<p><strong>Q4: How do you prevent hackers from attacking your website?</strong><br>
+<strong>Answer:</strong> Django ORM prevents SQL injection automatically by parameterizing all queries. For web form security, all requests require Django's CSRF token.</p>
+
+<p><strong>Q5: What do the 4 Preset Buttons on the Simulator do?</strong><br>
+<strong>Answer:</strong> They let us show real-life tests in one click:
+<br>1. <em>Account Drain:</em> Simulates a hacker emptying the account (shows 98% Red Risk).
+<br>2. <em>Drain + Cash-Out:</em> Simulates emptying balance via cash withdrawal.
+<br>3. <em>Normal UPI Transfer:</em> Routine ₹5,000 transfer (shows 0% Green Safe).
+<br>4. <em>Small Cash-Out:</em> Normal ₹2,000 ATM withdrawal (shows 0% Green Safe).</p>
+
+<p><strong>Q6: What happens when an analyst clicks "Mark as Reviewed" on an alert?</strong><br>
+<strong>Answer:</strong> It provides a Human-in-the-Loop review. A human officer confirms the fraud and clicks "Reviewed". This sends a quick <code>PATCH</code> request to the Django API and updates the alert status in MySQL.</p>
+
+<p><strong>Q7: Why XGBoost instead of Random Forest?</strong><br>
+<strong>Answer:</strong> Random Forest builds trees independently. XGBoost builds trees step-by-step, where each new tree fixes the errors of the previous ones. XGBoost is 4x faster and scored higher on our dataset.</p>
+
+<p><strong>Q8: How did you test the model without cheating? (Data Leakage)</strong><br>
+<strong>Answer:</strong> We split the data into 80% Training and 20% Testing before calculating any averages or equations. The test set was kept completely untouched until final evaluation.</p>
+
+<p><strong>Q9: Can this run in Docker?</strong><br>
+<strong>Answer:</strong> Yes, Ma'am. We created a production <code>Dockerfile</code> and <code>docker-compose.yml</code> so the whole system, including Django and MySQL, can run in a clean container.</p>
+
+<p><strong>Q10: What is your project's conclusion in one line?</strong><br>
+<strong>Answer:</strong> FraudGuard proves that by combining smart balance equations with XGBoost, banks can stop UPI fraud in under 2 milliseconds without acting like an unexplainable black box.</p>
+
+<div class="page-break"></div>
+
+<!-- PART 10 -->
+<h2>Part 10: 5-Minute Team Presentation Script</h2>
+<p>Here is how you can divide the presentation among the 4 team members so everyone speaks smoothly:</p>
+
+<div class="box box-speak">
+    <div class="box-title">👤 Member 1 (Wasil - Team Lead): Introduction (~1 Minute)</div>
+    <p><em>"Good morning Ma'am. Our project is <strong>FraudGuard</strong> — a Real-Time UPI Fraud Detection System. India processes billions of UPI transactions every month, and hackers are increasingly using account takeover attacks to drain victims' bank accounts. Old bank rules like 'flag transactions above ₹50,000' fail because hackers simply send smaller amounts. We built an intelligent system that evaluates transactions in under 2 milliseconds using Machine Learning and Explainable AI. I will now hand over to Tayyab to explain the dataset and our AI model."</em></p>
+</div>
+
+<div class="box box-speak">
+    <div class="box-title">👤 Member 2 (Tayyab - Data & Machine Learning): (~1.5 Minutes)</div>
+    <p><em>"Thank you, Wasil. Because real bank logs are confidential under RBI privacy laws, we used the internationally recognized PaySim dataset containing 63 lakh transactions. In fraud, 99.87% of transactions are honest, and only 0.13% are fraud. Rather than feeding raw amounts, we engineered two smart balance equations: Sender Balance Error and Receiver Balance Error. When a hacker empties an account, this ledger math deviates to zero. We trained an XGBoost model that achieved 99.57% Recall and 98.79% Precision. Haseeb will now demonstrate our live website."</em></p>
+</div>
+
+<div class="box box-speak">
+    <div class="box-title">👤 Member 3 (Haseeb - Live System Demo): (~1.5 Minutes)</div>
+    <p><em>"Thank you, Tayyab. Here is our live FraudGuard console. On our Transaction Simulator, I will click 'Account Drain Attack'. You can see ₹2,50,000 is sent, wiping the sender balance to zero. When I click Run Evaluation, in less than 2 milliseconds our gauge jumps to 98% Risk, flagging the fraud! Below, our SHAP Explainable AI explains in plain English that 'Sender Balance Discrepancy' was the main reason. Now, if I click 'Normal UPI Transfer', the gauge stays at 0% Safe. Flagged attacks automatically appear in our Fraud Alerts queue for bank officers to review. Sufiyan will now explain our metrics."</em></p>
+</div>
+
+<div class="box box-speak">
+    <div class="box-title">👤 Member 4 (Sufiyan - Metrics & Conclusion): (~1 Minute)</div>
+    <p><em>"Thank you, Haseeb. On our Analytics page, we track daily trends. In fraud detection, standard Accuracy is a trap because a useless model that approves everything can still get 99.87% accuracy while missing all fraud. We therefore benchmarked on Recall (99.57%) and F1-Score (99.18%). On our Settings page, bank officers can adjust the sensitivity threshold slider to balance fraud catching against false alarms. In conclusion, FraudGuard provides a fast, sub-2ms, transparent shield for digital payments. We are now happy to take your questions."</em></p>
+</div>
+
+<hr style="border: none; border-top: 1px solid #cbd5e1; margin-top: 25px;">
+<div style="text-align: center; color: #64748b; font-size: 8.5pt;">
+    FraudGuard Enterprise · Minor Project-I (AD-508) · Dept. of AI & Data Science · SISTec
+</div>
+
+</body>
+</html>
