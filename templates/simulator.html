@@ -147,30 +147,32 @@ const placeholder = document.getElementById("result-placeholder");
 const resultCard = document.getElementById("result-card");
 const submitBtn = document.getElementById("btn-submit");
 
-function setValues(type, amount, oldOrg, newOrg, oldDest, newDest) {
+function setValues(type, amount, oldOrg, newOrg, oldDest, newDest, senderId, receiverId) {
     form.elements["txn_type"].value = type;
     form.elements["amount"].value = amount;
     form.elements["old_balance_org"].value = oldOrg;
     form.elements["new_balance_org"].value = newOrg;
     form.elements["old_balance_dest"].value = oldDest;
     form.elements["new_balance_dest"].value = newDest;
+    if (senderId) form.elements["sender_id"].value = senderId;
+    if (receiverId) form.elements["receiver_id"].value = receiverId;
 }
 
 // Preset Scenario Handlers
 document.getElementById("fill-fraud-drain").addEventListener("click", function () {
-    setValues("TRANSFER", 250000, 250000, 0, 0, 250000); // 100% account drainage to thief
+    setValues("TRANSFER", 250000, 250000, 0, 0, 250000, "victim_user@upi", "thief_mule@upi");
 });
 
 document.getElementById("fill-fraud-cashout").addEventListener("click", function () {
-    setValues("CASH_OUT", 100000, 100000, 0, 0, 0); // complete cash-out: money withdrawn as physical cash, leaving 0 balance
+    setValues("CASH_OUT", 100000, 100000, 0, 0, 0, "victim_user@upi", "atm_kiosk_99");
 });
 
 document.getElementById("fill-normal-upi").addEventListener("click", function () {
-    setValues("TRANSFER", 5000, 80000, 75000, 20000, 25000); // normal transfer
+    setValues("TRANSFER", 5000, 80000, 75000, 20000, 25000, "rahul_sharma@upi", "grocery_store@upi");
 });
 
 document.getElementById("fill-small-cashout").addEventListener("click", function () {
-    setValues("CASH_OUT", 2000, 50000, 48000, 10000, 8000); // normal small cash out
+    setValues("CASH_OUT", 2000, 50000, 48000, 10000, 8000, "rahul_sharma@upi", "sbi_atm_kiosk");
 });
 
 form.addEventListener("submit", async function (event) {
@@ -244,31 +246,30 @@ form.addEventListener("submit", async function (event) {
             iconClass = "bi-exclamation-triangle-fill text-warning";
         }
 
-        // Build SHAP Factors breakdown
+        // Build Explainable Factors breakdown
         let factorsHtml = "";
-        const featureFriendlyNames = {
-            "error_balance_org": "Sender Balance Discrepancy (Drained)",
-            "error_balance_dest": "Receiver Balance Inconsistency",
-            "amount": "Transaction Volume / Amount",
-            "old_balance_org": "Sender Starting Balance",
-            "new_balance_org": "Sender Ending Balance",
-            "old_balance_dest": "Receiver Starting Balance",
-            "new_balance_dest": "Receiver Ending Balance",
-            "type_CASH_OUT": "Cash-Out Operation",
-            "type_TRANSFER": "Wire Transfer Operation"
+        const featureDescriptions = {
+            "Sender balance check": "Verifies if money sent matches ledger deduction",
+            "Sender balance after": "Remaining balance left in sender's account",
+            "Sender balance before": "Account balance prior to initiating transfer",
+            "Receiver balance check": "Verifies whether destination ledger credited properly",
+            "Receiver balance after": "Ending balance credited to destination",
+            "Receiver balance before": "Starting balance of destination account",
+            "Transaction amount": "Total volume of funds being transferred",
+            "Transaction type": "Payment vector (TRANSFER wire vs CASH_OUT)"
         };
 
         for (const r of (answer.explanation || [])) {
             const isRaise = r.impact > 0;
             const badgeClass = isRaise ? "shap-badge-raise" : "shap-badge-lower";
             const dirIcon = isRaise ? "↑ Raises Risk" : "↓ Lowers Risk";
-            const friendly = featureFriendlyNames[r.feature] || r.feature;
+            const desc = featureDescriptions[r.feature] || "Ledger evaluation parameter";
 
             factorsHtml += `
                 <div class="shap-factor-row d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="shap-factor-name">${friendly}</div>
-                        <div class="text-muted" style="font-size: 0.72rem; font-family: monospace;">${r.feature}</div>
+                        <div class="shap-factor-name">${r.feature}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">${desc}</div>
                     </div>
                     <div class="text-end">
                         <span class="${badgeClass}">${dirIcon} (${r.impact > 0 ? '+' : ''}${r.impact})</span>
