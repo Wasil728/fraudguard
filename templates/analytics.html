@@ -3,13 +3,8 @@
 {% block content %}
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
     <div>
-        <h2 class="h4 mb-1 fw-bold text-dark">Model Analytics &amp; Performance Telemetry</h2>
-        <p class="text-muted mb-0 small">Historical transaction traffic, flagged fraud volume, and academic model evaluation metrics.</p>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-        <span class="badge bg-light text-secondary border px-3 py-2 small shadow-sm">
-            <i class="bi bi-clock-history text-primary me-1"></i> Live Stream Aggregation
-        </span>
+        <h2 class="h4 mb-1 fw-bold text-dark">Analytics &amp; Performance Metrics</h2>
+        <p class="text-muted mb-0 small">Daily transaction volume, flagged fraud trend, and model performance scores.</p>
     </div>
 </div>
 
@@ -35,10 +30,9 @@
         <div class="card p-4 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div>
-                    <h5 class="h6 mb-0 fw-bold text-dark">Production Test Metrics</h5>
-                    <small class="text-muted">Evaluated on test split (PaySim benchmark)</small>
+                    <h5 class="h6 mb-0 fw-bold text-dark">Model Performance Scores</h5>
+                    <small class="text-muted">Evaluated on test dataset</small>
                 </div>
-                <span class="badge bg-success-subtle text-success border border-success-subtle">Benchmarked</span>
             </div>
             {% if metric %}
             <div style="min-height: 220px;">
@@ -74,7 +68,7 @@
 <!-- Academic Viva Reference Card -->
 <div class="card p-4">
     <h5 class="h6 mb-3 fw-bold text-dark">
-        <i class="bi bi-mortarboard-fill text-primary me-2"></i>Academic Metric Interpretation (Minor Project AD-508 Defense)
+        <i class="bi bi-info-circle-fill text-primary me-2"></i>Key Evaluation Metrics Explained
     </h5>
     <div class="row g-3">
         <div class="col-md-3">

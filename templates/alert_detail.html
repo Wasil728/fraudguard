@@ -17,7 +17,7 @@
                 <span id="status-text">{{ alert.status|title }}</span>
             </span>
         </div>
-        <p class="text-muted mb-0 small">Audit trail and TreeSHAP attribution generated at {{ alert.created_at|date:"M d, Y H:i:s" }} UTC</p>
+        <p class="text-muted mb-0 small">Transaction recorded at {{ alert.created_at|date:"M d, Y H:i:s" }} UTC</p>
     </div>
     <!-- Analyst Resolution Actions -->
     <div class="d-flex align-items-center gap-2">
@@ -116,12 +116,11 @@
                     </div>
                 </div>
                 <div class="small text-muted">
-                    <p class="mb-2"><strong>Decision Logic:</strong> Transaction exceeds the configured risk threshold. Full balance drain discrepancy identified between sender starting balance and transfer amount.</p>
-                    <p class="mb-0"><strong>Inference Latency:</strong> &lt; 2 milliseconds</p>
+                    <p class="mb-0"><strong>Decision:</strong> Transaction score exceeds the active risk threshold. Account balance drainage discrepancy detected between starting balance and transfer amount.</p>
                 </div>
             </div>
             <div class="pt-3 border-top mt-3">
-                <span class="text-xs text-muted" style="font-size: 0.75rem;">Model Signature: XGBoost v2.0.3 · PaySim Synthetic Benchmark · Gradient Boosted Trees</span>
+                <span class="text-xs text-muted" style="font-size: 0.75rem;">Evaluation: Automated Machine Learning Risk Assessment</span>
             </div>
         </div>
     </div>
@@ -131,10 +130,9 @@
 <div class="card p-4 mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <h5 class="h6 mb-0 fw-bold text-dark">TreeSHAP Feature Attribution (Why the model flagged this)</h5>
-            <small class="text-muted">Red bars indicate features pushing towards Fraud, green bars indicate features pushing towards Legitimate.</small>
+            <h5 class="h6 mb-0 fw-bold text-dark">Why This Transaction Was Flagged (Key Factors)</h5>
+            <small class="text-muted">Red bars indicate factors increasing fraud risk, green bars indicate factors lowering risk.</small>
         </div>
-        <span class="badge bg-light text-secondary border">Local Explainability</span>
     </div>
     <div style="min-height: 220px;">
         <canvas id="shapChart" height="110"></canvas>
