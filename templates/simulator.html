@@ -162,7 +162,7 @@ document.getElementById("fill-fraud-drain").addEventListener("click", function (
 });
 
 document.getElementById("fill-fraud-cashout").addEventListener("click", function () {
-    setValues("CASH_OUT", 100000, 100000, 0, 20000, 120000); // drain account via cash-out withdrawal
+    setValues("CASH_OUT", 100000, 100000, 0, 0, 0); // complete cash-out: money withdrawn as physical cash, leaving 0 balance
 });
 
 document.getElementById("fill-normal-upi").addEventListener("click", function () {
